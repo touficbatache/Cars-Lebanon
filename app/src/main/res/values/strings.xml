@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Cars</string>
+
+    <string name="value_method_post">POST</string>
+    <string name="value_method_get">GET</string>
+    <string name="Ok">Ok</string>
+    <string name="Cancel">Cancel</string>
+
+    <string-array name="car_letter_array">
+        <item>#</item>
+        <item>*</item>
+        <item>--</item>
+        <item>ب</item>
+        <item>ج</item>
+        <item>د</item>
+        <item>ر</item>
+        <item>ز</item>
+        <item>ص</item>
+        <item>ط</item>
+        <item>ع</item>
+        <item>ق</item>
+        <item>م</item>
+        <item>ن</item>
+        <item>و</item>
+    </string-array>
+
+</resources>

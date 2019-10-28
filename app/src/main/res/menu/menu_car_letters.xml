@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="#" />
+    <item android:title="*" />
+    <item android:title="--" />
+    <item android:title="ب" />
+    <item android:title="ج" />
+    <item android:title="د" />
+    <item android:title="ر" />
+    <item android:title="ز" />
+    <item android:title="ص" />
+    <item android:title="ط" />
+    <item android:title="ع" />
+    <item android:title="ق" />
+    <item android:title="م" />
+    <item android:title="ن" />
+    <item android:title="و" />
+</menu>

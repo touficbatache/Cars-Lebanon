@@ -1,0 +1,33 @@
+# generated files
+bin/
+gen/
+.apt_generated/
+output/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+mvp/app.iml
+
+*.class
+*.dex
+*.apk
+*.ap_
+
+# Intellij project files
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# OSX files
+.DS_Store
+
+#Android studio
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+objectbox-models/default.json.bak
