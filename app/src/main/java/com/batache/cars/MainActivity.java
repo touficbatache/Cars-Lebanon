@@ -38,17 +38,9 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
     context = MainActivity.this;
 
-    new UserLoginRequest(this, new RequestCallback() {
-      @Override
-      public void onSuccess() {
-        initViews();
-      }
+    new UserLoginRequest(context).execute();
 
-      @Override
-      public void onFailure() {
-        Toast.makeText(context, "Please make sure you're connected to the internet", Toast.LENGTH_SHORT).show();
-      }
-    }).execute();
+    initViews();
   }
 
   private void initViews() {
@@ -84,26 +76,15 @@ public class MainActivity extends AppCompatActivity {
 
   private static class UserLoginRequest extends AsyncTask<Void, Void, String> {
     Context context;
-    RequestCallback callback;
     String response = "";
 
-    UserLoginRequest(Context context, RequestCallback requestCallback) {
+    UserLoginRequest(Context context) {
       this.context = context;
-      callback = requestCallback;
     }
 
     public String doInBackground(Void... voidArr) {
-      if(!GeneralUtils.isNetworkAvailable(context)) {
-        callback.onFailure();
-        return null;
-      }
       response = new HttpServiceHandler().makeServiceCall("http://lebanonride.com/and1.0/apns.php?task=register&deviceuid=" + GeneralUtils.getDeviceUId());
       return response;
-    }
-
-    public void onPostExecute(String str) {
-      super.onPostExecute(str);
-      callback.onSuccess();
     }
   }
 
