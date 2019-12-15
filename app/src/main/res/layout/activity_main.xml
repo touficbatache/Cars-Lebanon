@@ -1,79 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
+    android:background="@drawable/background_backdrop"
     tools:context=".MainActivity">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/car_plate_template"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:src="@drawable/car_plate_template"
-        app:layout_constraintBottom_toTopOf="@id/btn_submit"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/letter_guideline"
-        android:layout_width="wrap_content"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/backLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.16" />
+        app:elevation="0dp">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_car_letter"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:clickable="false"
-        android:fontFamily="@font/din_1451"
-        android:includeFontPadding="false"
-        android:text="A"
-        android:textColor="#262022"
-        android:textSize="74sp"
-        app:layout_constraintBottom_toBottomOf="@id/car_plate_template"
-        app:layout_constraintStart_toEndOf="@id/letter_guideline"
-        app:layout_constraintTop_toTopOf="@id/car_plate_template" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/number_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.29" />
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigation_view"
+            style="@style/Widget.MaterialComponents.NavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingStart="@dimen/small_gap"
+            android:paddingEnd="@dimen/small_gap"
+            app:elevation="0dp"
+            app:itemBackground="@drawable/bg_menu_item"
+            app:itemTextColor="@color/white"
+            app:menu="@menu/main_menu" />
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/et_car_number"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:fontFamily="@font/din_1451"
-        android:hint="1234567"
-        android:includeFontPadding="false"
-        android:inputType="number"
-        android:letterSpacing="0.08"
-        android:textAlignment="center"
-        android:textColor="#262022"
-        android:textSize="74sp"
-        app:layout_constraintBottom_toBottomOf="@id/car_plate_template"
-        app:layout_constraintEnd_toEndOf="@id/car_plate_template"
-        app:layout_constraintStart_toEndOf="@id/number_guideline"
-        app:layout_constraintTop_toTopOf="@id/car_plate_template" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_submit"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Get driver info"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/car_plate_template" />
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/foregroundContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:layout_behavior="ru.semper_viventem.backdrop.BackdropBehavior">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <fragment
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:navGraph="@navigation/nav_graph" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

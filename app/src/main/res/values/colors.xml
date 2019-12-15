@@ -5,4 +5,7 @@
     <color name="colorSecondary">#D81B60</color>
 
     <color name="fieldStrokeColor">#9e9e9e</color>
+
+    <color name="white">@android:color/white</color>
+    <color name="white_translucent_38">#61ffffff</color>
 </resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/carDetailsFragment"
+        android:title="Search by: Car Details" />
+    <item
+        android:id="@+id/personalDetailsFragment"
+        android:title="Search by: Person's Name" />
+    <item
+        android:id="@+id/phoneNumberFragment"
+        android:title="Search by: Phone Number" />
+</menu>
