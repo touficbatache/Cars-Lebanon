@@ -87,7 +87,7 @@ public class CarsResponse {
 
     @SerializedName("car_out_of_order")
     @Expose
-    public String carOutOfOrder = null;
+    public boolean carOutOfOrder = false;
 
     @SerializedName("car_chassis_number")
     @Expose

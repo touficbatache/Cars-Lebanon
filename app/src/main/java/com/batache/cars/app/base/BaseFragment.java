@@ -31,7 +31,6 @@ public abstract class BaseFragment extends Fragment {
     controller = new CarsController(requireContext(), getSearchListener());
 
     EpoxyRecyclerView recyclerView = (EpoxyRecyclerView) rootView;
-//    recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
     recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
     recyclerView.setController(controller);
 

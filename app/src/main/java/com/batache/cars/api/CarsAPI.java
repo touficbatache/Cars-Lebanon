@@ -3,6 +3,7 @@ package com.batache.cars.api;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -36,7 +37,7 @@ public class CarsAPI {
       @Override
       public void onResponse(@NonNull Call<CarsResponse> call, @NonNull Response<CarsResponse> response) {
         if (response.body() != null) {
-          List<CarsResponse.Car> cars = response.body().cars;
+          List<CarsResponse.Car> cars = getSortedList(response.body().cars);
           onCarsFetchedListener.onSuccess(cars);
         } else {
           onCarsFetchedListener.onFailure(new Throwable("No cars found"));
@@ -56,7 +57,7 @@ public class CarsAPI {
       @Override
       public void onResponse(@NonNull Call<CarsResponse> call, @NonNull Response<CarsResponse> response) {
         if (response.body() != null) {
-          List<CarsResponse.Car> cars = response.body().cars;
+          List<CarsResponse.Car> cars = getSortedList(response.body().cars);
           onCarsFetchedListener.onSuccess(cars);
         } else {
           onCarsFetchedListener.onFailure(new Throwable("No cars found"));
@@ -76,7 +77,7 @@ public class CarsAPI {
       @Override
       public void onResponse(@NonNull Call<CarsResponse> call, @NonNull Response<CarsResponse> response) {
         if (response.body() != null) {
-          List<CarsResponse.Car> cars = response.body().cars;
+          List<CarsResponse.Car> cars = getSortedList(response.body().cars);
           onCarsFetchedListener.onSuccess(cars);
         } else {
           onCarsFetchedListener.onFailure(new Throwable("No cars found"));
@@ -88,6 +89,20 @@ public class CarsAPI {
         onCarsFetchedListener.onFailure(t);
       }
     });
+  }
+
+  private List<CarsResponse.Car> getSortedList(List<CarsResponse.Car> unsortedCars) {
+    List<CarsResponse.Car> sortedCars = new ArrayList<>();
+
+    for(CarsResponse.Car car : unsortedCars) {
+      if(!car.carOutOfOrder) {
+        sortedCars.add(0, car);
+      } else if(!car.carNumber.isEmpty() && !car.carLetter.isEmpty()) {
+        sortedCars.add(car);
+      }
+    }
+
+    return unsortedCars;
   }
 
   public interface OnCarsFetchedListener {

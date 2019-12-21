@@ -8,6 +8,7 @@ import com.batache.cars.model.adapter.divider.DividerModel_;
 import com.batache.cars.model.adapter.main.CarDetailsSearchModel_;
 import com.batache.cars.model.adapter.main.PersonalDetailsSearchModel_;
 import com.batache.cars.model.adapter.main.PhoneNumberSearchModel_;
+import com.batache.cars.model.adapter.out_of_order.OutOfOrderItemModel_;
 import com.batache.cars.model.adapter.table.LeftTableItemModel_;
 import com.batache.cars.model.adapter.table.RightTableItemModel_;
 import com.batache.cars.model.adapter.table.TopTableBorderItemModel_;
@@ -72,18 +73,25 @@ public class CarsController extends BaseController {
   }
 
   private void addTable(CarsResponse.Car car) {
-    data.add(new TopTableBorderItemModel_());
+    if (!car.carOutOfOrder) {
+      data.add(new TopTableBorderItemModel_());
 
-    addTableItem("Car number", String.format("%s %s", car.carLetter, car.carNumber));
-    addTableItem("Car", String.format("%s %s %s", car.carBrand, car.carType, car.carColor));
-    addTableItem("Category", car.carCategory);
-    addTableItem("Name", String.format("%s %s", car.ownerFirstName, car.ownerLastName));
-    addTableItem("Phone number", car.ownerPhoneNumber);
-    addTableItem("Address", car.ownerAddress);
-    addTableItem("Registry number", car.ownerRegistryNumber);
-    addTableItem("Birthday", String.format("%s in %s", car.ownerBirthday, car.ownerBirthplace));
-    addTableItem("Production year", car.carProductionYear);
-    addTableItem("Put into circulation in", String.format("%s on %s", car.carPutIntoCirculationYear, car.carAcquisitionDate));
+      addTableItem("Car number", String.format("%s %s", car.carLetter, car.carNumber));
+      addTableItem("Car", String.format("%s %s %s", car.carBrand, car.carType, car.carColor));
+      addTableItem("Category", car.carCategory);
+      addTableItem("Name", String.format("%s %s", car.ownerFirstName, car.ownerLastName));
+      addTableItem("Phone number", car.ownerPhoneNumber);
+      addTableItem("Address", car.ownerAddress);
+      addTableItem("Registry number", car.ownerRegistryNumber);
+      addTableItem("Birthday", String.format("%s in %s", car.ownerBirthday, car.ownerBirthplace));
+      addTableItem("Production year", car.carProductionYear);
+      addTableItem("Put into circulation in", String.format("%s on %s", car.carPutIntoCirculationYear, car.carAcquisitionDate));
+    } else {
+      data.add(new OutOfOrderItemModel_()
+          .context(context)
+          .car(car)
+      );
+    }
   }
 
   private void addTableItem(String label, String value) {

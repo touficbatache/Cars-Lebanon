@@ -37,6 +37,8 @@ dependencies {
 
     implementation 'ru.semper-viventem.backdrop:backdrop:0.1.7'
 
+    implementation 'com.github.florent37:expansionpanel:1.2.2'
+
     implementation 'androidx.navigation:navigation-fragment:2.1.0'
     implementation 'androidx.navigation:navigation-ui:2.1.0'
 }
