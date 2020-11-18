@@ -8,4 +8,15 @@
 
     <color name="white">@android:color/white</color>
     <color name="white_translucent_38">#61ffffff</color>
+
+    <color name="black">@android:color/black</color>
+
+    <color name="car_private">#1b62a7</color>
+    <color name="car_public">#d8322e</color>
+    <color name="car_test">#fff150</color>
+    <color name="car_transit">#49a787</color>
+    <color name="car_temporary_entering">#673818</color>
+    <color name="car_tourism">#d83e91</color>
+    <color name="car_political">#f2933d</color>
+    <color name="car_consulate">#943292</color>
 </resources>

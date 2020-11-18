@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.PopupMenu;
 
@@ -48,6 +49,7 @@ public abstract class CarDetailsSearchModel extends FullSizeModelWithHolder<CarD
           public boolean onMenuItemClick(MenuItem item) {
             carLtr = item.getTitle().toString();
             holder.carLetterTv.setText(getCarLetter(carLtr));
+            updateLayoutColor(holder);
             return true;
           }
         });
@@ -66,6 +68,7 @@ public abstract class CarDetailsSearchModel extends FullSizeModelWithHolder<CarD
             searchListener.onSuccess(cars);
 
             resetViewsState(holder);
+            updateLayoutColor(holder);
           }
 
           @Override
@@ -73,10 +76,36 @@ public abstract class CarDetailsSearchModel extends FullSizeModelWithHolder<CarD
             searchListener.onFailure(t);
 
             resetViewsState(holder);
+            updateLayoutColor(holder);
           }
         });
       }
     });
+  }
+
+  private void updateLayoutColor(CarDetailsSearchHolder holder) {
+    int color = R.color.car_private;
+    switch (getCarLetter(carLtr)) {
+      case "P":
+        color = R.color.car_public;
+        break;
+      case "AP":
+      case "D":
+        color = R.color.car_political;
+        break;
+      case "C":
+      case "C1":
+        color = R.color.car_consulate;
+        break;
+    }
+    holder.carPlateTemplate.setBackgroundColor(context.getResources().getColor(color));
+
+    int textColor = R.color.black;
+    if(getCarLetter(carLtr).equals("P")) {
+      textColor = R.color.car_public;
+    }
+    holder.carLetterTv.setTextColor(context.getResources().getColor(textColor));
+    holder.carNbEt.setTextColor(context.getResources().getColor(textColor));
   }
 
   private String getCarLetter(String arabicCarLetter) {
@@ -96,12 +125,14 @@ public abstract class CarDetailsSearchModel extends FullSizeModelWithHolder<CarD
 
   class CarDetailsSearchHolder extends EpoxyHolder {
 
+    AppCompatImageView carPlateTemplate;
     AppCompatTextView carLetterTv;
     AppCompatEditText carNbEt;
     MaterialButton submitBtn;
 
     @Override
     protected void bindView(@NonNull View itemView) {
+      carPlateTemplate = itemView.findViewById(R.id.car_plate_template);
       carLetterTv = itemView.findViewById(R.id.tv_car_letter);
       carNbEt = itemView.findViewById(R.id.et_car_number);
       submitBtn = itemView.findViewById(R.id.btn_submit);

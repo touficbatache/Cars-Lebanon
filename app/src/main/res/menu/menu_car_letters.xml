@@ -6,17 +6,17 @@
     <item android:title="A" />
     <item android:title="AP (Political)" />
     <item android:title="B (Beirut)" />
+    <item android:title="C (Consulate)" />
+    <item android:title="C1" />
     <item android:title="D (Diplomatic)" />
     <item android:title="G (Jounieh)" />
-    <item android:title="K (Baalbeck)" />
-    <item android:title="K1" />
+    <item android:title="J (Judicial)" />
     <item android:title="M (Motorcycles, companies or institutions)" />
     <item android:title="N (Nabatiye)" />
     <item android:title="O (Ouzai)" />
     <item android:title="P (Public transportation)" />
-    <item android:title="R (Judicial)" />
+    <item android:title="R (Religious)" />
     <item android:title="S (Sidon)" />
     <item android:title="T (Tripoli)" />
-    <item android:title="Y (Aley)" />
     <item android:title="Z (Zahleh)" />
 </menu>
