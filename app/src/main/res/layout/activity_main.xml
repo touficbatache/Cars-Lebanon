@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_backdrop"
+    android:background="?attr/colorPrimary"
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -21,20 +21,43 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/navigation_view"
-            style="@style/Widget.MaterialComponents.NavigationView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:paddingStart="@dimen/small_gap"
-            android:paddingEnd="@dimen/small_gap"
-            app:elevation="0dp"
-            app:itemBackground="@drawable/bg_menu_item"
-            app:itemTextColor="@color/white"
-            app:menu="@menu/main_menu" />
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:theme="@style/Theme.Cars.White">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/carNumberBtn"
+                style="@style/Widget.Cars.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:text="Car number" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ownerNameBtn"
+                style="@style/Widget.Cars.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:text="Owner name" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ownerPhoneNumberBtn"
+                style="@style/Widget.Cars.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:text="Owner phone number" />
+
+        </LinearLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_gravity="bottom"
+        android:background="?attr/colorSurface" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/foregroundContainer"
@@ -42,16 +65,15 @@
         android:layout_height="match_parent"
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
-        app:layout_behavior="ru.semper_viventem.backdrop.BackdropBehavior">
+        app:layout_behavior="ru.semper_viventem.backdrop.BackdropBehavior"
+        tools:layout_marginTop="260dp">
 
-        <fragment
-            android:id="@+id/nav_host_fragment"
-            android:name="androidx.navigation.fragment.NavHostFragment"
+        <com.airbnb.epoxy.EpoxyRecyclerView
+            android:id="@+id/recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:defaultNavHost="true"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:navGraph="@navigation/nav_graph" />
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2" />
 
     </com.google.android.material.card.MaterialCardView>
 

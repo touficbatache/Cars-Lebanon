@@ -1,37 +1,30 @@
-package com.batache.cars.model.adapter.table;
+package com.batache.cars.model.adapter.table
 
-import android.view.View;
-import android.widget.TextView;
+import android.view.View
+import android.widget.TextView
+import com.airbnb.epoxy.EpoxyAttribute
+import com.airbnb.epoxy.EpoxyHolder
+import com.airbnb.epoxy.EpoxyModelClass
+import com.airbnb.epoxy.EpoxyModelWithHolder
+import com.batache.cars.R
+import com.batache.cars.model.adapter.table.RightTableItemModel.RightTableItemModelHolder
 
-import androidx.annotation.NonNull;
-
-import com.airbnb.epoxy.EpoxyAttribute;
-import com.airbnb.epoxy.EpoxyHolder;
-import com.airbnb.epoxy.EpoxyModelClass;
-import com.airbnb.epoxy.EpoxyModelWithHolder;
-import com.batache.cars.R;
-
-@EpoxyModelClass(layout = R.layout.item_right_table_item)
-public abstract class RightTableItemModel extends EpoxyModelWithHolder<RightTableItemModel.RightTableItemModelHolder> {
+@EpoxyModelClass(layout = R.layout.item_table_right_item)
+abstract class RightTableItemModel : EpoxyModelWithHolder<RightTableItemModelHolder>() {
 
   @EpoxyAttribute
-  String title;
+  var title: String? = null
 
-  @Override
-  public void bind(@NonNull RightTableItemModelHolder holder) {
-    super.bind(holder);
-
-    holder.title.setText(title);
+  override fun bind(holder: RightTableItemModelHolder) {
+    super.bind(holder)
+    holder.title?.text = title
   }
 
-  class RightTableItemModelHolder extends EpoxyHolder {
+  inner class RightTableItemModelHolder : EpoxyHolder() {
+    var title: TextView? = null
 
-    TextView title;
-
-    @Override
-    protected void bindView(@NonNull View itemView) {
-      this.title = (TextView) itemView;
+    override fun bindView(itemView: View) {
+      this.title = itemView as TextView
     }
   }
-
 }

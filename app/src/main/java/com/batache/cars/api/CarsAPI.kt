@@ -1,112 +1,92 @@
-package com.batache.cars.api;
+package com.batache.cars.api
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import com.batache.cars.api.CarsResponse.Car
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.List;
+object CarsAPI {
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
+  private val carsApiRetrofit: Retrofit
+  private val carsApiInterface: CarsApiInterface
 
-public class CarsAPI {
-
-  private static CarsAPI sInstance;
-  public static final String TAG = "CarsAPI";
-
-  private Retrofit carsApiRetrofit;
-  private CarsApiInterface carsApiInterface;
-
-  public static CarsAPI getInstance() {
-    if (sInstance == null) {
-      sInstance = new CarsAPI();
-    }
-    return sInstance;
+  init {
+    carsApiRetrofit = CarsApiClient.getRetrofitClient()
+    carsApiInterface = carsApiRetrofit.create(CarsApiInterface::class.java)
   }
 
-  private CarsAPI() {
-    carsApiRetrofit = CarsApiClient.getRetrofitClient();
-    carsApiInterface = carsApiRetrofit.create(CarsApiInterface.class);
-  }
-
-  public void getCarsByCarDetails(String carNumber, String carLetter, final OnCarsFetchedListener onCarsFetchedListener) {
-    Call<CarsResponse> call = carsApiInterface.getCarsByCarDetails(carNumber, carLetter);
-    call.enqueue(new Callback<CarsResponse>() {
-      @Override
-      public void onResponse(@NonNull Call<CarsResponse> call, @NonNull Response<CarsResponse> response) {
+  fun searchByCarNumber(carNumber: String?, carLetter: String?, onCarsFetchedListener: OnCarsFetchedListener) {
+    val call = carsApiInterface.searchByCarNumber(carNumber, carLetter)
+    call.enqueue(object : Callback<CarsResponse?> {
+      override fun onResponse(call: Call<CarsResponse?>, response: Response<CarsResponse?>) {
         if (response.body() != null) {
-          List<CarsResponse.Car> cars = getSortedList(response.body().cars);
-          onCarsFetchedListener.onSuccess(cars);
+          val cars = getSortedList(response.body()!!.cars)
+          onCarsFetchedListener.onSuccess(cars)
         } else {
-          onCarsFetchedListener.onFailure(new Throwable("No cars found"));
+          onCarsFetchedListener.onFailure(Throwable("No cars found"))
         }
       }
 
-      @Override
-      public void onFailure(@NonNull Call<CarsResponse> call, @NonNull Throwable t) {
-        onCarsFetchedListener.onFailure(t);
+      override fun onFailure(call: Call<CarsResponse?>, t: Throwable) {
+        onCarsFetchedListener.onFailure(t)
       }
-    });
+    })
   }
 
-  public void getCarsByPersonalDetails(String firstName, String lastName, boolean allowInaccurateResults, final OnCarsFetchedListener onCarsFetchedListener) {
-    Call<CarsResponse> call = carsApiInterface.getCarsByPersonalDetails(firstName, lastName, allowInaccurateResults);
-    call.enqueue(new Callback<CarsResponse>() {
-      @Override
-      public void onResponse(@NonNull Call<CarsResponse> call, @NonNull Response<CarsResponse> response) {
+  fun searchByOwnerName(firstName: String?, lastName: String?, allowInaccurateResults: Boolean, onCarsFetchedListener: OnCarsFetchedListener) {
+    val call = carsApiInterface.searchByOwnerName(firstName, lastName, allowInaccurateResults)
+    call.enqueue(object : Callback<CarsResponse?> {
+      override fun onResponse(call: Call<CarsResponse?>, response: Response<CarsResponse?>) {
         if (response.body() != null) {
-          List<CarsResponse.Car> cars = getSortedList(response.body().cars);
-          onCarsFetchedListener.onSuccess(cars);
+          val cars = getSortedList(response.body()!!.cars)
+          onCarsFetchedListener.onSuccess(cars)
         } else {
-          onCarsFetchedListener.onFailure(new Throwable("No cars found"));
+          onCarsFetchedListener.onFailure(Throwable("No cars found"))
         }
       }
 
-      @Override
-      public void onFailure(@NonNull Call<CarsResponse> call, @NonNull Throwable t) {
-        onCarsFetchedListener.onFailure(t);
+      override fun onFailure(call: Call<CarsResponse?>, t: Throwable) {
+        onCarsFetchedListener.onFailure(t)
       }
-    });
+    })
   }
 
-  public void getCarsByPhoneNumber(String phoneNumber, final OnCarsFetchedListener onCarsFetchedListener) {
-    Call<CarsResponse> call = carsApiInterface.getCarsByPhoneNumber(phoneNumber);
-    call.enqueue(new Callback<CarsResponse>() {
-      @Override
-      public void onResponse(@NonNull Call<CarsResponse> call, @NonNull Response<CarsResponse> response) {
+  fun searchByOwnerPhoneNumber(phoneNumber: String?, onCarsFetchedListener: OnCarsFetchedListener) {
+    val call = carsApiInterface.searchByOwnerPhoneNumber(phoneNumber)
+    call.enqueue(object : Callback<CarsResponse?> {
+      override fun onResponse(call: Call<CarsResponse?>, response: Response<CarsResponse?>) {
         if (response.body() != null) {
-          List<CarsResponse.Car> cars = getSortedList(response.body().cars);
-          onCarsFetchedListener.onSuccess(cars);
+          val cars = getSortedList(response.body()!!.cars)
+          onCarsFetchedListener.onSuccess(cars)
         } else {
-          onCarsFetchedListener.onFailure(new Throwable("No cars found"));
+          onCarsFetchedListener.onFailure(Throwable("No cars found"))
         }
       }
 
-      @Override
-      public void onFailure(@NonNull Call<CarsResponse> call, @NonNull Throwable t) {
-        onCarsFetchedListener.onFailure(t);
+      override fun onFailure(call: Call<CarsResponse?>, t: Throwable) {
+        onCarsFetchedListener.onFailure(t)
       }
-    });
+    })
   }
 
-  private List<CarsResponse.Car> getSortedList(List<CarsResponse.Car> unsortedCars) {
-    List<CarsResponse.Car> sortedCars = new ArrayList<>();
+  private fun getSortedList(unsortedCars: List<Car>): List<Car> {
+    val sortedCars: MutableList<Car> = ArrayList()
 
-    for(CarsResponse.Car car : unsortedCars) {
-      if(!car.carOutOfOrder) {
-        sortedCars.add(0, car);
-      } else if(!car.carNumber.isEmpty() && !car.carLetter.isEmpty()) {
-        sortedCars.add(car);
+    for (car in unsortedCars) {
+      if (!car.carOutOfOrder) {
+        sortedCars.add(0, car)
+      } else if (!car.carNumber.isEmpty() && !car.carLetter.isEmpty()) {
+        sortedCars.add(car)
       }
     }
 
-    return unsortedCars;
+    return sortedCars
   }
 
-  public interface OnCarsFetchedListener {
-    void onSuccess(List<CarsResponse.Car> cars);
-    void onFailure(@Nullable Throwable t);
+  interface OnCarsFetchedListener {
+    fun onSuccess(cars: List<Car>?)
+    fun onFailure(t: Throwable?)
   }
 }

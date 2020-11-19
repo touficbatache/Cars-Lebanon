@@ -1,53 +1,127 @@
-package com.batache.cars;
+package com.batache.cars
 
-import android.os.Bundle;
+import android.os.Bundle
+import android.os.Handler
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.batache.cars.api.CarsAPI
+import com.batache.cars.api.CarsAPI.OnCarsFetchedListener
+import com.batache.cars.api.CarsResponse.Car
+import com.batache.cars.ui.controller.CarsController
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_main.*
+import ru.semper_viventem.backdrop.BackdropBehavior
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 
-import com.google.android.material.navigation.NavigationView;
+class MainActivity : AppCompatActivity(), View.OnClickListener, CarsController.CarsListener, OnCarsFetchedListener {
 
-import ru.semper_viventem.backdrop.BackdropBehavior;
+  private var backdropBehavior: BackdropBehavior? = null
 
-public class MainActivity extends AppCompatActivity {
+  private var controller: CarsController? = null
 
-  private BackdropBehavior backdropBehavior;
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
+    setSupportActionBar(toolbar)
 
-  private NavigationView navigationView;
-  private NavController navController;
+    (foregroundContainer.layoutParams as CoordinatorLayout.LayoutParams).let { params ->
+      (params.behavior as BackdropBehavior?)?.let {
+        backdropBehavior = it
+        it.addOnDropListener(object : BackdropBehavior.OnDropListener {
+          override fun onDrop(dropState: BackdropBehavior.DropState, fromUser: Boolean) {
+            if (dropState == BackdropBehavior.DropState.OPEN) {
+              supportActionBar?.title = "Search by"
+            } else if (dropState == BackdropBehavior.DropState.CLOSE) {
+              supportActionBar?.title = getApplicationName()
+            }
+          }
+        })
+        it.attachBackLayout(R.id.backLayout)
+        it.setClosedIcon(R.drawable.ic_menu)
+        it.setOpenedIcon(R.drawable.ic_close)
+      }
+    }
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
-    setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+    CarsController(this).let {
+      controller = it
+      recyclerview.setController(it)
+      it.loadStaticSection(CarsController.CAR_NUMBER_SEARCH)
+      it.requestModelBuild()
+    }
 
-    CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.foregroundContainer).getLayoutParams();
-    backdropBehavior = (BackdropBehavior) params.getBehavior();
-    backdropBehavior.attachBackLayout(R.id.backLayout);
-    backdropBehavior.setClosedIcon(R.drawable.ic_menu);
-    backdropBehavior.setOpenedIcon(R.drawable.ic_close);
-
-    setupNavigation();
+    carNumberBtn.setOnClickListener(this)
+    ownerNameBtn.setOnClickListener(this)
+    ownerPhoneNumberBtn.setOnClickListener(this)
   }
 
-  private void setupNavigation() {
-    navigationView = findViewById(R.id.navigation_view);
-    navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+  fun getApplicationName(): String? {
+    val stringId = applicationInfo.labelRes
+    return if (stringId == 0) applicationInfo.nonLocalizedLabel.toString() else getString(stringId)
+  }
 
-    NavigationUI.setupWithNavController(navigationView, navController);
-    navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
-      @Override
-      public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
-        backdropBehavior.close(true);
-      }
-    });
+  override fun onClick(view: View?) {
+    when (view) {
+      carNumberBtn -> CarsController.CAR_NUMBER_SEARCH
+      ownerNameBtn -> CarsController.OWNER_NAME_SEARCH
+      ownerPhoneNumberBtn -> CarsController.OWNER_PHONE_NUMBER_SEARCH
+      else -> null
+    }?.let {
+      controller?.isEmptyBuild = true
+      controller?.requestModelBuild()
+
+      Handler().postDelayed({
+        controller?.isEmptyBuild = false
+        controller?.loadStaticSection(it)
+        controller?.requestModelBuild()
+        backdropBehavior?.close(true)
+      }, 10)
+    }
+  }
+
+  override fun onSearchByCarNumber(letter: String?, number: String?) {
+    CarsAPI.searchByCarNumber(number, letter, this)
+  }
+
+  override fun onSearchByOwnerName(firstName: String?, lastName: String?, allowInaccurate: Boolean) {
+    CarsAPI.searchByOwnerName(firstName, lastName, allowInaccurate, this)
+  }
+
+  override fun onSearchByOwnerPhoneNumber(phoneNumber: String?) {
+    CarsAPI.searchByOwnerPhoneNumber(phoneNumber, this)
+  }
+
+  override fun onSuccess(cars: List<Car>?) {
+    cars?.let {
+      hideKeyboard()
+
+      controller?.isEmptyBuild = true
+      controller?.requestModelBuild()
+
+      Handler().postDelayed({
+        controller?.isEmptyBuild = false
+        controller?.loadCars(it)
+        controller?.requestModelBuild()
+      }, 10)
+    }
+  }
+
+  override fun onFailure(t: Throwable?) {
+    hideKeyboard()
+    Snackbar.make(foregroundContainer, "No cars found", Snackbar.LENGTH_SHORT).show()
+
+    controller?.isEmptyBuild = true
+    controller?.requestModelBuild()
+
+    Handler().postDelayed({
+      controller?.isEmptyBuild = false
+      controller?.clear()
+      controller?.requestModelBuild()
+    }, 10)
+  }
+
+  private fun hideKeyboard() {
+    (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(currentFocus?.windowToken, 0)
   }
 }

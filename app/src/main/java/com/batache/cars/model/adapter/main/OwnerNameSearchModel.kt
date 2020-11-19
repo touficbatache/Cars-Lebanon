@@ -1,95 +1,62 @@
-package com.batache.cars.model.adapter.main;
+package com.batache.cars.model.adapter.main
 
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.view.View
+import android.widget.CheckBox
+import com.airbnb.epoxy.EpoxyAttribute
+import com.airbnb.epoxy.EpoxyHolder
+import com.airbnb.epoxy.EpoxyModelClass
+import com.batache.cars.R
+import com.batache.cars.model.adapter.base.FullSizeModelWithHolder
+import com.batache.cars.ui.controller.CarsController.CarsListener
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.airbnb.epoxy.EpoxyAttribute;
-import com.airbnb.epoxy.EpoxyHolder;
-import com.airbnb.epoxy.EpoxyModelClass;
-import com.batache.cars.R;
-import com.batache.cars.api.CarsAPI;
-import com.batache.cars.api.CarsResponse;
-import com.batache.cars.app.base.BaseFragment;
-import com.batache.cars.model.adapter.base.FullSizeModelWithHolder;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
-
-import java.util.List;
-
-@EpoxyModelClass(layout = R.layout.layout_search_by_personal_details)
-public abstract class PersonalDetailsSearchModel extends FullSizeModelWithHolder<PersonalDetailsSearchModel.PersonalDetailsSearchHolder> {
+@EpoxyModelClass(layout = R.layout.layout_search_owner_name)
+abstract class OwnerNameSearchModel : FullSizeModelWithHolder<OwnerNameSearchModel.OwnerNameSearchHolder?>() {
 
   @EpoxyAttribute
-  BaseFragment.SearchListener searchListener;
+  var listener: CarsListener? = null
 
-  private boolean allowInaccurateResults = false;
+  private var allowInaccurateResults = false
 
-  @Override
-  public void bind(@NonNull final PersonalDetailsSearchHolder holder) {
-    super.bind(holder);
+  override fun bind(holder: OwnerNameSearchHolder) {
+    super.bind(holder)
 
-    holder.allowInaccurateResultsChbx.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-      @Override
-      public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-        allowInaccurateResults = isChecked;
-      }
-    });
-    holder.allowInaccurateResultsChbx.setChecked(false);
+    resetViewsState(holder)
 
-    holder.submitBtn.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        searchListener.onSubmitClick();
-        disableViews(holder);
+    holder.allowInaccurateResultsChbx?.setOnCheckedChangeListener { compoundButton, isChecked -> allowInaccurateResults = isChecked }
+    holder.allowInaccurateResultsChbx?.isChecked = false
 
-        CarsAPI.getInstance().getCarsByPersonalDetails(holder.firstNameEt.getText().toString(), holder.lastNameEt.getText().toString(), allowInaccurateResults, new CarsAPI.OnCarsFetchedListener() {
-          @Override
-          public void onSuccess(List<CarsResponse.Car> cars) {
-            searchListener.onSuccess(cars);
-
-            resetViewsState(holder);
-          }
-
-          @Override
-          public void onFailure(@Nullable Throwable t) {
-            searchListener.onFailure(t);
-
-            resetViewsState(holder);
-          }
-        });
-      }
-    });
-  }
-
-  private void disableViews(PersonalDetailsSearchHolder holder) {
-    holder.allowInaccurateResultsChbx.setEnabled(false);
-    holder.submitBtn.setEnabled(false);
-  }
-
-  private void resetViewsState(PersonalDetailsSearchHolder holder) {
-    holder.firstNameEt.setText("");
-    holder.lastNameEt.setText("");
-    holder.allowInaccurateResultsChbx.setEnabled(true);
-    holder.submitBtn.setEnabled(true);
-  }
-
-  class PersonalDetailsSearchHolder extends EpoxyHolder {
-
-    TextInputEditText firstNameEt, lastNameEt;
-    CheckBox allowInaccurateResultsChbx;
-    MaterialButton submitBtn;
-
-    @Override
-    protected void bindView(@NonNull View itemView) {
-      firstNameEt = itemView.findViewById(R.id.et_first_name);
-      lastNameEt = itemView.findViewById(R.id.et_last_name);
-      allowInaccurateResultsChbx = itemView.findViewById(R.id.chbx_allow_inaccurate_results);
-      submitBtn = itemView.findViewById(R.id.btn_submit);
+    holder.submitBtn?.setOnClickListener {
+      disableViews(holder)
+      listener?.onSearchByOwnerName(holder.firstNameEt?.text.toString(), holder.lastNameEt?.text.toString(), allowInaccurateResults)
     }
   }
 
+  private fun resetViewsState(holder: OwnerNameSearchHolder) {
+    holder.firstNameEt?.setText("")
+    holder.lastNameEt?.setText("")
+    holder.allowInaccurateResultsChbx?.isChecked = false
+    holder.allowInaccurateResultsChbx?.isEnabled = true
+    holder.submitBtn?.isEnabled = true
+  }
+
+  private fun disableViews(holder: OwnerNameSearchHolder) {
+    holder.allowInaccurateResultsChbx?.isEnabled = false
+    holder.submitBtn?.isEnabled = false
+  }
+
+  inner class OwnerNameSearchHolder : EpoxyHolder() {
+    var firstNameEt: TextInputEditText? = null
+    var lastNameEt: TextInputEditText? = null
+    var allowInaccurateResultsChbx: CheckBox? = null
+    var submitBtn: MaterialButton? = null
+
+    override fun bindView(itemView: View) {
+      firstNameEt = itemView.findViewById(R.id.et_first_name)
+      lastNameEt = itemView.findViewById(R.id.et_last_name)
+      allowInaccurateResultsChbx = itemView.findViewById(R.id.chbx_allow_inaccurate_results)
+      submitBtn = itemView.findViewById(R.id.btn_submit)
+    }
+  }
 }

@@ -1,8 +1,11 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.0"
+
     defaultConfig {
         applicationId "com.batache.cars"
         minSdkVersion 21
@@ -11,6 +14,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -33,7 +37,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
 
     implementation 'com.airbnb.android:epoxy:3.5.1'
-    annotationProcessor 'com.airbnb.android:epoxy-processor:3.5.1'
+    kapt 'com.airbnb.android:epoxy-processor:3.5.1'
 
     implementation 'ru.semper-viventem.backdrop:backdrop:0.1.7'
 

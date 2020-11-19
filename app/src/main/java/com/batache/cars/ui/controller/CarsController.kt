@@ -1,107 +1,121 @@
-package com.batache.cars.ui.controller;
+package com.batache.cars.ui.controller
 
-import android.content.Context;
+import com.airbnb.epoxy.EpoxyController
+import com.airbnb.epoxy.EpoxyModelWithHolder
+import com.batache.cars.R
+import com.batache.cars.api.CarsResponse.Car
+import com.batache.cars.model.adapter.divider.divider
+import com.batache.cars.model.adapter.main.carNumberSearch
+import com.batache.cars.model.adapter.main.ownerNameSearch
+import com.batache.cars.model.adapter.main.ownerPhoneNumberSearch
+import com.batache.cars.model.adapter.out_of_order.outOfOrderItem
+import com.batache.cars.model.adapter.table.leftTableItem
+import com.batache.cars.model.adapter.table.rightTableItem
+import com.batache.cars.model.adapter.table.topTableBorderItem
 
-import com.batache.cars.api.CarsResponse;
-import com.batache.cars.app.base.BaseFragment;
-import com.batache.cars.model.adapter.divider.DividerModel_;
-import com.batache.cars.model.adapter.main.CarDetailsSearchModel_;
-import com.batache.cars.model.adapter.main.PersonalDetailsSearchModel_;
-import com.batache.cars.model.adapter.main.PhoneNumberSearchModel_;
-import com.batache.cars.model.adapter.out_of_order.OutOfOrderItemModel_;
-import com.batache.cars.model.adapter.table.LeftTableItemModel_;
-import com.batache.cars.model.adapter.table.RightTableItemModel_;
-import com.batache.cars.model.adapter.table.TopTableBorderItemModel_;
+class CarsController(private val carsListener: CarsListener) : EpoxyController() {
 
-import java.util.List;
-
-public class CarsController extends BaseController {
-
-  private Context context;
-  private BaseFragment.SearchListener searchListener;
-
-  public CarsController(Context context, BaseFragment.SearchListener searchListener) {
-    this.context = context;
-    this.searchListener = searchListener;
+  companion object {
+    const val CAR_NUMBER_SEARCH = 0
+    const val OWNER_NAME_SEARCH = 1
+    const val OWNER_PHONE_NUMBER_SEARCH = 2
   }
 
-  public void addSearchByCarDetails() {
-    data.add(new CarDetailsSearchModel_()
-        .context(context)
-        .searchListener(searchListener)
-    );
+  var isEmptyBuild: Boolean = false
 
-    requestModelBuild();
+  var staticSectionId: Int? = null
+  var carsList: List<Car> = ArrayList()
+
+  fun loadStaticSection(id: Int?) {
+    staticSectionId = id
   }
 
-  public void addSearchByPersonalDetails() {
-    data.add(new PersonalDetailsSearchModel_()
-        .searchListener(searchListener)
-    );
-
-    requestModelBuild();
+  fun loadCars(cars: List<Car>) {
+    carsList = cars
   }
 
-  public void addSearchByPhoneNumber() {
-    data.add(new PhoneNumberSearchModel_()
-        .searchListener(searchListener)
-    );
-
-    requestModelBuild();
+  fun clear() {
+    carsList = ArrayList()
   }
 
-  public void addTables(List<CarsResponse.Car> cars) {
-    data.add(new DividerModel_()
-        .context(context)
-        .showResultsText(true)
-    );
+  private fun getMap(car: Car): Map<String, String> {
+    return mutableMapOf<String, String>().apply {
+      put("Car number", String.format("%s %s", car.carLetter, car.carNumber))
+      put("Car", String.format("%s %s %s", car.carBrand, car.carType, car.carColor))
+      put("Category", car.carCategory)
+      put("Name", String.format("%s %s", car.ownerFirstName, car.ownerLastName))
+      put("Phone number", car.ownerPhoneNumber)
+      put("Address", car.ownerAddress)
+      put("Registry number", car.ownerRegistryNumber)
+      put("Birthday", String.format("%s in %s", car.ownerBirthday, car.ownerBirthplace))
+      put("Production year", car.carProductionYear)
+      put("Put into circulation in", String.format("%s on %s", car.carPutIntoCirculationYear, car.carAcquisitionDate))
+    }
+  }
 
-    if (cars.size() > 0) {
-      for (int i = 0; i < cars.size(); i++) {
-        if (i > 0) {
-          data.add(new DividerModel_()
-              .context(context)
-              .showResultsText(false)
-          );
-        }
+  override fun buildModels() {
+    if (isEmptyBuild) {
+      return
+    }
 
-        addTable(cars.get(i));
+    when (staticSectionId) {
+      CAR_NUMBER_SEARCH -> carNumberSearch {
+        id("car_details_search")
+        listener(carsListener)
+      }
+      OWNER_NAME_SEARCH -> ownerNameSearch {
+        id("owner_name_search")
+        listener(carsListener)
+      }
+      OWNER_PHONE_NUMBER_SEARCH -> ownerPhoneNumberSearch {
+        id("owner_phone_number_search")
+        listener(carsListener)
       }
     }
 
-    requestModelBuild();
-  }
+    if (carsList.isNotEmpty()) {
+      divider {
+        id("results_divider")
+        showResultsText(true)
+      }
 
-  private void addTable(CarsResponse.Car car) {
-    if (!car.carOutOfOrder) {
-      data.add(new TopTableBorderItemModel_());
+      for (i in carsList.indices) {
+        val car = carsList[i]
 
-      addTableItem("Car number", String.format("%s %s", car.carLetter, car.carNumber));
-      addTableItem("Car", String.format("%s %s %s", car.carBrand, car.carType, car.carColor));
-      addTableItem("Category", car.carCategory);
-      addTableItem("Name", String.format("%s %s", car.ownerFirstName, car.ownerLastName));
-      addTableItem("Phone number", car.ownerPhoneNumber);
-      addTableItem("Address", car.ownerAddress);
-      addTableItem("Registry number", car.ownerRegistryNumber);
-      addTableItem("Birthday", String.format("%s in %s", car.ownerBirthday, car.ownerBirthplace));
-      addTableItem("Production year", car.carProductionYear);
-      addTableItem("Put into circulation in", String.format("%s on %s", car.carPutIntoCirculationYear, car.carAcquisitionDate));
-    } else {
-      data.add(new OutOfOrderItemModel_()
-          .context(context)
-          .car(car)
-      );
+        if (i > 0) {
+          divider {
+            id("car_divider_$i")
+          }
+        }
+
+        if (!car.carOutOfOrder) {
+          topTableBorderItem {
+            id("top_table_border_$i")
+          }
+
+          for ((leftTableData, rightTableData) in getMap(car)) {
+            leftTableItem {
+              id("left_table_$i")
+              title(leftTableData)
+            }
+            rightTableItem {
+              id("right_table_$i")
+              title(rightTableData)
+            }
+          }
+        } else {
+          outOfOrderItem {
+            id("out_of_order_$i")
+            car(car)
+          }
+        }
+      }
     }
   }
 
-  private void addTableItem(String label, String value) {
-    data.add(new LeftTableItemModel_()
-        .title(label)
-    );
-
-    data.add(new RightTableItemModel_()
-        .title(value)
-    );
+  interface CarsListener {
+    fun onSearchByCarNumber(letter: String?, number: String?)
+    fun onSearchByOwnerName(firstName: String?, lastName: String?, allowInaccurate: Boolean)
+    fun onSearchByOwnerPhoneNumber(phoneNumber: String?)
   }
-
 }
