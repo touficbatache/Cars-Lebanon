@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, CarsController.C
       Handler().postDelayed({
         controller?.isEmptyBuild = false
         controller?.loadStaticSection(it)
+        controller?.clear()
         controller?.requestModelBuild()
         backdropBehavior?.close(true)
       }, 10)
