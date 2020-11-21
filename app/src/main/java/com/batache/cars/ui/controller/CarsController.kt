@@ -38,8 +38,8 @@ class CarsController(private val carsListener: CarsListener) : EpoxyController()
     carsList = ArrayList()
   }
 
-  private fun getMap(car: Car): Map<String, String> {
-    return mutableMapOf<String, String>().apply {
+  private fun getMap(car: Car): Map<String, String?> {
+    return mutableMapOf<String, String?>().apply {
       put("Car number", String.format("%s %s", car.carLetter, car.carNumber))
       put("Car", String.format("%s %s %s", car.carBrand, car.carType, car.carColor))
       put("Category", car.carCategory)
