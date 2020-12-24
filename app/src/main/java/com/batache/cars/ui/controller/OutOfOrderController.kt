@@ -29,7 +29,7 @@ class OutOfOrderController : EpoxyController() {
     requestModelBuild()
   }
 
-  private fun addTableItem(label: String, value: String) {
+  private fun addTableItem(label: String, value: String?) {
     data.add(LeftTableItemModel_()
         .title(label)
     )
